@@ -29,4 +29,17 @@ public abstract class CardCollection {
     public int size(){
         return cards.size();
     }
+
+    public Card topCard() throws ArrayIndexOutOfBoundsException{
+        if(!cards.isEmpty()) return cards.get(cards.size()-1);
+        else throw new ArrayIndexOutOfBoundsException("Cannot look at the top card in an empty pile.");
+    }
+
+    public Card replaceTop(Card card) throws ArrayIndexOutOfBoundsException{
+        if(!cards.isEmpty()){
+            cards.add(1, card);
+            return cards.remove(0);
+        }
+        else throw new ArrayIndexOutOfBoundsException("Cannot replace a card that does not exist.");
+    }
 }
