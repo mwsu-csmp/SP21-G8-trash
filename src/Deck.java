@@ -1,6 +1,7 @@
+
 import java.util.Random;
 
-public class Deck extends CardCollection{
+public class Deck extends CardCollection {
     public Deck(){
         for(int i = 2; i <= 14; i++){
             cards.add(new Card(i, Suit.Clubs));
