@@ -1,3 +1,7 @@
+import javafx.scene.image.Image;
+
+import java.util.Locale;
+
 public class Card {
     private final int value;
     private final Suit suit;
@@ -50,5 +54,16 @@ public class Card {
                 break;
         }
         return localValue + " of " + suit.toString();
+    }
+
+    public String getImageDir() {
+        if(!faceUp)
+            return "resources/cardBack.png";
+        else {
+            String localName = this.toString();
+            localName = localName.toLowerCase(Locale.ENGLISH);
+            localName = localName.replaceAll(" ", "_");
+            return String.format("resources/cardFaces/%s.png", localName);
+        }
     }
 }
