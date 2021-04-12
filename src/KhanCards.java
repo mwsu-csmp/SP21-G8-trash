@@ -1,9 +1,10 @@
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 /**
@@ -16,7 +17,7 @@ public class KhanCards extends Application {
     private Pile[] playerScoringArea;
     private Pile[] opponentScoringArea;
 
-    public void initialize(){
+    public void initializeCards(){
         deck  = new Deck(true);
         discard = new Pile();
         active = new Pile(1);
@@ -40,24 +41,34 @@ public class KhanCards extends Application {
         }
     }
 
+
+
     public static void main(String[] args){
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        initialize();
+        BorderPane bp = new BorderPane();
+        bp.setPrefSize(1080, 768);
+        bp.setPadding(new Insets(10, 10, 10, 10));
+        Scene scene = new Scene(bp);
 
-        Box b1 = new Box(50, 50, 20);
-        Box b2 = new Box(80, 30, 20);
-        b1.setMaterial(new PhongMaterial(Color.INDIANRED));
-        b2.setMaterial(new PhongMaterial(Color.DARKGREEN));
-        FlowPane shapes = new FlowPane();
-        shapes.getChildren().add(b1);
-        shapes.getChildren().add(b2);
-        Scene scene = new Scene(shapes);
+        Button startGame = new Button("Start the game!");
+        startGame.setOnAction( actionEvent -> {
+            initializeCards();
+            System.out.println("Game Started.");
+        });
+
+        HBox buttons = new HBox();
+        buttons.setAlignment(Pos.CENTER);
+        buttons.getChildren().add(startGame);
+
+        bp.setRight(buttons);
+
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setResizable(false);
+        primaryStage.setTitle("Khan Cards");
         primaryStage.show();
     }
 }
