@@ -9,8 +9,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Timer.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A simulation of the two player card game Trash versus an automatic opponent.
@@ -32,7 +39,7 @@ public class KhanCards extends Application {
     private final FlowPane deckPane = new FlowPane();
     private final FlowPane discardPane = new FlowPane();
 
-    private final TextArea textLog = new TextArea("Welcome to the game!\n");
+    private final TextArea textLog = new TextArea("Welcome to the game!\n\n");
     private final VBox textPane = new VBox(textLog);
 
     private final HBox buttons = new HBox();
@@ -41,16 +48,8 @@ public class KhanCards extends Application {
     private ImageView activeCardView;
     private ImageView discardView;
     private ImageView deckView;
-    private ImageView playerScoringView1;
-    private ImageView playerScoringView2;
-    private ImageView playerScoringView3;
-    private ImageView playerScoringView4;
-    private ImageView playerScoringView5;
-    private ImageView playerScoringView6;
-    private ImageView playerScoringView7;
-    private ImageView playerScoringView8;
-    private ImageView playerScoringView9;
-    private ImageView playerScoringView10;
+    private final ArrayList<ImageView> playerScoringViews = new ArrayList(10);
+    private final ArrayList<ImageView> enemyScoringViews = new ArrayList(10);
     private ImageView enemyScoringView1;
     private ImageView enemyScoringView2;
     private ImageView enemyScoringView3;
@@ -62,6 +61,10 @@ public class KhanCards extends Application {
     private ImageView enemyScoringView9;
     private ImageView enemyScoringView10;
 
+    /** Initial setup for the viewing space.
+     *
+     * @throws FileNotFoundException if an image is not in the proper directory
+     */
     private void initialSetup() throws FileNotFoundException{
         masterPane.setGridLinesVisible(true); //FOR DEBUGGING, COMMENT OUT IN FINAL CODE
         masterPane.setPrefSize(1080, 768);
@@ -101,97 +104,25 @@ public class KhanCards extends Application {
         bottomSpace.setPercentHeight(57);
         masterPane.getRowConstraints().addAll(enemyScoringTop, enemyScoringBottom, deckDiscardTop, deckDiscardBottom, playerScoringTop, playerScoringBottom, bottomSpace);
 
-        playerScoringView1 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView1.setPreserveRatio(true);
-        playerScoringView1.setFitWidth(BOARD_CARD_WIDTH);
+        for (int i = 0; i<10; i++) {
+            playerScoringViews.add( new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA))) );
+            playerScoringViews.get(i).setPreserveRatio(true);
+            playerScoringViews.get(i).setFitWidth(BOARD_CARD_WIDTH);
+        }
 
-        playerScoringView2 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView2.setPreserveRatio(true);
-        playerScoringView2.setFitWidth(BOARD_CARD_WIDTH);
+        for (int i = 0; i<10; i++) {
+            enemyScoringViews.add( new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA))) );
+            enemyScoringViews.get(i).setPreserveRatio(true);
+            enemyScoringViews.get(i).setFitWidth(BOARD_CARD_WIDTH);
+        }
 
-        playerScoringView3 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView3.setPreserveRatio(true);
-        playerScoringView3.setFitWidth(BOARD_CARD_WIDTH);
-
-        playerScoringView4 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView4.setPreserveRatio(true);
-        playerScoringView4.setFitWidth(BOARD_CARD_WIDTH);
-
-        playerScoringView5 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView5.setPreserveRatio(true);
-        playerScoringView5.setFitWidth(BOARD_CARD_WIDTH);
-
-        playerScoringView6 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView6.setPreserveRatio(true);
-        playerScoringView6.setFitWidth(BOARD_CARD_WIDTH);
-
-        playerScoringView7 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView7.setPreserveRatio(true);
-        playerScoringView7.setFitWidth(BOARD_CARD_WIDTH);
-
-        playerScoringView8 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView8.setPreserveRatio(true);
-        playerScoringView8.setFitWidth(BOARD_CARD_WIDTH);
-
-        playerScoringView9 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView9.setPreserveRatio(true);
-        playerScoringView9.setFitWidth(BOARD_CARD_WIDTH);
-
-        playerScoringView10 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        playerScoringView10.setPreserveRatio(true);
-        playerScoringView10.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView1 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView1.setPreserveRatio(true);
-        enemyScoringView1.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView2 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView2.setPreserveRatio(true);
-        enemyScoringView2.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView3 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView3.setPreserveRatio(true);
-        enemyScoringView3.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView4 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView4.setPreserveRatio(true);
-        enemyScoringView4.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView5 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView5.setPreserveRatio(true);
-        enemyScoringView5.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView6 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView6.setPreserveRatio(true);
-        enemyScoringView6.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView7 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView7.setPreserveRatio(true);
-        enemyScoringView7.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView8 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView8.setPreserveRatio(true);
-        enemyScoringView8.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView9 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView9.setPreserveRatio(true);
-        enemyScoringView9.setFitWidth(BOARD_CARD_WIDTH);
-
-        enemyScoringView10 = new ImageView(new Image(new FileInputStream(FilePaths.EMPTY_CARD_AREA)));
-        enemyScoringView10.setPreserveRatio(true);
-        enemyScoringView10.setFitWidth(BOARD_CARD_WIDTH);
-
-        playerScoringAreaPane.getChildren().addAll(playerScoringView1, playerScoringView2, playerScoringView3,
-                playerScoringView4, playerScoringView5, playerScoringView6, playerScoringView7, playerScoringView8,
-                playerScoringView9, playerScoringView10);
+        playerScoringAreaPane.getChildren().addAll(playerScoringViews);
 
         playerScoringAreaPane.setVgap(13);
         playerScoringAreaPane.setHgap(40.25);
         playerScoringAreaPane.setAlignment(Pos.TOP_CENTER);
 
-        enemyScoringAreaPane.getChildren().addAll(enemyScoringView1, enemyScoringView2, enemyScoringView3,
-                enemyScoringView4, enemyScoringView5, enemyScoringView6, enemyScoringView7, enemyScoringView8,
-                enemyScoringView9, enemyScoringView10);
+        enemyScoringAreaPane.getChildren().addAll(enemyScoringViews);
 
         enemyScoringAreaPane.setVgap(13);
         enemyScoringAreaPane.setHgap(40.25);
@@ -232,11 +163,24 @@ public class KhanCards extends Application {
         masterPane.add(playerScoringAreaPane, 1, 5, 5, 5); // player scoring area positioning
     }
 
+    /** helper function for printing to the textField
+     *
+     * @param arg text to be printed
+     */
     private void printNewLine(String arg){
         textLog.appendText(arg + "\n\n");
     }
 
+    /** logic and object setup for the game pieces
+     *
+     */
     private void initializeCards(){
+        if(!playersTurn){
+            printNewLine("The Khan doesn't like quitters; especially on their turn.  They let you know with a spinning roundhouse kick.");
+            return;
+        }
+        playersTurn = true;
+
         deck  = new Deck(true);
         discard = new Pile();
         active = new Pile(1);
@@ -262,9 +206,19 @@ public class KhanCards extends Application {
         printNewLine("Game Started.");
     }
 
+    /** logic for clicking the deck
+     *
+     */
     private void pressDrawCard(){
+        if(!playersTurn){
+            printNewLine("The Khan catches you trying to act out of turn and judo chops you.");
+            return;
+        }
         try {
-            if (active.size() > 0) discard.add(active.draw());
+            if (active.size() > 0){
+                printNewLine("As you try to draw a second card, the Khan snatches your hand, squeezes forcefully, and stares at you sternly");
+                return;
+            }
             active.add(deck.draw());
             printNewLine("Drew the " + active.topCard().toString());
         }
@@ -277,6 +231,9 @@ public class KhanCards extends Application {
         updateImages();
     }
 
+    /** logic for clicking the active card
+     *
+     */
     private void pressActiveCard(){
         try {
             if(playersTurn) printNewLine("You are holding " + active.topCard().toString());
@@ -288,27 +245,123 @@ public class KhanCards extends Application {
         catch (ArrayIndexOutOfBoundsException e){
             printNewLine("No-one is holding any cards.");
         }
-        updateImages();
     }
 
+    /** logic for clicking the discard.
+     *
+     */
     private void pressDiscard(){
-        printNewLine("That's the discard pile.");
-    }
-
-    private void pressPlayerScoringArea(int index){
-        try{
-            playerScoringArea[index].topCard().reveal();
+        if(!playersTurn){
+            printNewLine("The Khan catches you trying to act out of turn and judo chops you.");
+            return;
         }
-        catch (Exception e){
-            printNewLine("something wrong fix later");
+        try {
+            if(active.size() == 0){
+                printNewLine("Searching the Discard pile will be added later.");
+            }
+            else
+                //TODO check for win
+                discard.add(active.draw());
+                playersTurn = false;
+                enemyTurn();
+        }
+        catch (NullPointerException e){
+            printNewLine("The game has not yet started.");
         }
         updateImages();
     }
 
+    /** logic for clicking one of the player's scoring areas
+     *
+     * @param index for which area got clicked
+     */
+    private synchronized void pressPlayerScoringArea(int index){
+        if(!playersTurn){
+            printNewLine("The Khan catches you trying to act out of turn and judo chops you.");
+            return;
+        }
+        try{
+            if ((active.topCard().getValue() == index+1 || active.topCard().getValue() == 13    // if the player is holding a matching card or wildcard...
+                    || (index == 0 && active.topCard().getValue() == 14))                       // (aces match space 1)
+                    && !playerScoringArea[index].topCard().isFaceUp()){                         // ...and the card in that space has not already been revealed...
+                playerScoringArea[index].topCard().reveal();                                    // ...then reveal that card and swap it with what's in hand
+                active.add(playerScoringArea[index].replaceTop(active.draw()));
+                printNewLine("Pulled " + active.topCard().toString() + " from your scoring area.");
+            }
+            else {
+                printNewLine("The Khan clobbers you for making an illegal move.");
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            printNewLine("The Khan clobbers you for making an illegal move.");
+        }
+        catch (NullPointerException e){
+            printNewLine("The game has not yet started.");
+        }
+        updateImages();
+    }
+
+    /** logic for clicking any of the enemy's scoring areas
+     *
+     */
     private void pressEnemyScoringArea(){
         printNewLine("As you reach for the Khan's scoring area, they smack your hand.");
     }
 
+    private void enemyTurn(){
+        //  delay(() -> {
+        //      printNewLine("some action happens.");
+        //  }, 500);
+
+        playersTurn = false;
+        printNewLine("The Khan starts to think...");
+
+        boolean outOfOptions = false;
+        while (!playersTurn) {
+            if(active.size() <= 0 && deck.size() > 0){
+                active.add(deck.draw());
+                updateImages();
+            }
+            else if (!outOfOptions){
+                boolean optionsUpdate = true;
+                for(int i = 0; i < enemyScoringArea.length; i++){
+                    if(!enemyScoringArea[i].topCard().isFaceUp() && (active.topCard().getValue() == i+1
+                            || active.topCard().getValue() == 13 || (i == 0 && active.topCard().getValue() == 14))){
+                        enemyScoringArea[i].topCard().reveal();
+                        active.add(enemyScoringArea[i].replaceTop(active.draw()));
+                        updateImages();
+                        optionsUpdate = false;
+                        break;
+                    }
+                }
+                outOfOptions = optionsUpdate;
+            }
+            else {
+                // TODO check for win
+                discard.add(active.draw());
+                updateImages();
+                playersTurn = true;
+            }
+        }
+
+        printNewLine("The Khan ends their turn.");
+        updateImages();
+        playersTurn = true;
+    }
+
+    private void delay( Runnable future, long time ){
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                future.run();
+            }
+        }, time);
+    }
+
+    /** updates all ImageViews to correctly reflect content
+     *
+     */
     private void updateImages(){
         try {
             if (active != null)
@@ -321,84 +374,14 @@ public class KhanCards extends Application {
                 discardView.setImage(new Image(new FileInputStream(discard.getImageDir())));
 
             if (playerScoringArea != null)
-                if (playerScoringArea[0] != null)
-                    playerScoringView1.setImage(new Image(new FileInputStream(playerScoringArea[0].getImageDir())));
-
-            if (playerScoringArea != null)
-                if (playerScoringArea[1] != null)
-                    playerScoringView2.setImage(new Image(new FileInputStream(playerScoringArea[1].getImageDir())));
-
-            if (playerScoringArea != null)
-                if (playerScoringArea[2] != null)
-                    playerScoringView3.setImage(new Image(new FileInputStream(playerScoringArea[2].getImageDir())));
-
-            if (playerScoringArea != null)
-                if (playerScoringArea[3] != null)
-                    playerScoringView4.setImage(new Image(new FileInputStream(playerScoringArea[3].getImageDir())));
-
-            if (playerScoringArea != null)
-                if (playerScoringArea[4] != null)
-                    playerScoringView5.setImage(new Image(new FileInputStream(playerScoringArea[4].getImageDir())));
-
-            if (playerScoringArea != null)
-                if (playerScoringArea[5] != null)
-                    playerScoringView6.setImage(new Image(new FileInputStream(playerScoringArea[5].getImageDir())));
-
-            if (playerScoringArea != null)
-                if (playerScoringArea[6] != null)
-                    playerScoringView7.setImage(new Image(new FileInputStream(playerScoringArea[6].getImageDir())));
-
-            if (playerScoringArea != null)
-                if (playerScoringArea[7] != null)
-                    playerScoringView8.setImage(new Image(new FileInputStream(playerScoringArea[7].getImageDir())));
-
-            if (playerScoringArea != null)
-                if (playerScoringArea[8] != null)
-                    playerScoringView9.setImage(new Image(new FileInputStream(playerScoringArea[8].getImageDir())));
-
-            if (playerScoringArea != null)
-                if (playerScoringArea[9] != null)
-                    playerScoringView10.setImage(new Image(new FileInputStream(playerScoringArea[9].getImageDir())));
+                for (int i = 0; (i<playerScoringArea.length && i<playerScoringViews.size()); i++)
+                    if(playerScoringArea[i] != null)
+                        playerScoringViews.get(i).setImage(new Image(new FileInputStream(playerScoringArea[i].getImageDir())));
 
             if (enemyScoringArea != null)
-                if (enemyScoringArea[0] != null)
-                    enemyScoringView1.setImage(new Image(new FileInputStream(enemyScoringArea[0].getImageDir())));
-
-            if (enemyScoringArea != null)
-                if (enemyScoringArea[1] != null)
-                    enemyScoringView2.setImage(new Image(new FileInputStream(enemyScoringArea[1].getImageDir())));
-
-            if (enemyScoringArea != null)
-                if (enemyScoringArea[2] != null)
-                    enemyScoringView3.setImage(new Image(new FileInputStream(enemyScoringArea[2].getImageDir())));
-
-            if (enemyScoringArea != null)
-                if (enemyScoringArea[3] != null)
-                    enemyScoringView4.setImage(new Image(new FileInputStream(enemyScoringArea[3].getImageDir())));
-
-            if (enemyScoringArea != null)
-                if (enemyScoringArea[4] != null)
-                    enemyScoringView5.setImage(new Image(new FileInputStream(enemyScoringArea[4].getImageDir())));
-
-            if (enemyScoringArea != null)
-                if (enemyScoringArea[5] != null)
-                    enemyScoringView6.setImage(new Image(new FileInputStream(enemyScoringArea[5].getImageDir())));
-
-            if (enemyScoringArea != null)
-                if (enemyScoringArea[6] != null)
-                    enemyScoringView7.setImage(new Image(new FileInputStream(enemyScoringArea[6].getImageDir())));
-
-            if (enemyScoringArea != null)
-                if (enemyScoringArea[7] != null)
-                    enemyScoringView8.setImage(new Image(new FileInputStream(enemyScoringArea[7].getImageDir())));
-
-            if (enemyScoringArea != null)
-                if (enemyScoringArea[8] != null)
-                    enemyScoringView9.setImage(new Image(new FileInputStream(enemyScoringArea[8].getImageDir())));
-
-            if (enemyScoringArea != null)
-                if (enemyScoringArea[9] != null)
-                    enemyScoringView10.setImage(new Image(new FileInputStream(enemyScoringArea[9].getImageDir())));
+                for (int i = 0; (i<enemyScoringArea.length && i<enemyScoringViews.size()); i++)
+                    if(enemyScoringArea[i] != null)
+                        enemyScoringViews.get(i).setImage(new Image(new FileInputStream(enemyScoringArea[i].getImageDir())));
         }
         catch (FileNotFoundException e) {
             printNewLine("Somehow, the visible nature of some cards have been wiped from existence.  The Khan is furious.");
@@ -419,27 +402,27 @@ public class KhanCards extends Application {
         discardView.setOnMouseClicked(mouseEvent -> pressDiscard());
         activeCardView.setOnMouseClicked(mouseEvent -> pressActiveCard());
 
-        playerScoringView1.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(0));
-        playerScoringView2.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(1));
-        playerScoringView3.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(2));
-        playerScoringView4.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(3));
-        playerScoringView5.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(4));
-        playerScoringView6.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(5));
-        playerScoringView7.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(6));
-        playerScoringView8.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(7));
-        playerScoringView9.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(8));
-        playerScoringView10.setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(9));
+        playerScoringViews.get(0).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(0));
+        playerScoringViews.get(1).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(1));
+        playerScoringViews.get(2).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(2));
+        playerScoringViews.get(3).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(3));
+        playerScoringViews.get(4).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(4));
+        playerScoringViews.get(5).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(5));
+        playerScoringViews.get(6).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(6));
+        playerScoringViews.get(7).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(7));
+        playerScoringViews.get(8).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(8));
+        playerScoringViews.get(9).setOnMouseClicked(mouseEvent -> pressPlayerScoringArea(9));
 
-        enemyScoringView1.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
-        enemyScoringView2.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
-        enemyScoringView3.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
-        enemyScoringView4.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
-        enemyScoringView5.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
-        enemyScoringView6.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
-        enemyScoringView7.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
-        enemyScoringView8.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
-        enemyScoringView9.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
-        enemyScoringView10.setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(0).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(1).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(2).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(3).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(4).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(5).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(6).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(7).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(8).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
+        enemyScoringViews.get(9).setOnMouseClicked(mouseEvent -> pressEnemyScoringArea());
 
         primaryStage.setScene(new Scene(masterPane));
         primaryStage.setResizable(false);
