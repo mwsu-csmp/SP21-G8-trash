@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -50,16 +49,6 @@ public class KhanCards extends Application {
     private ImageView deckView;
     private final ArrayList<ImageView> playerScoringViews = new ArrayList(10);
     private final ArrayList<ImageView> enemyScoringViews = new ArrayList(10);
-    private ImageView enemyScoringView1;
-    private ImageView enemyScoringView2;
-    private ImageView enemyScoringView3;
-    private ImageView enemyScoringView4;
-    private ImageView enemyScoringView5;
-    private ImageView enemyScoringView6;
-    private ImageView enemyScoringView7;
-    private ImageView enemyScoringView8;
-    private ImageView enemyScoringView9;
-    private ImageView enemyScoringView10;
 
     /** Initial setup for the viewing space.
      *
