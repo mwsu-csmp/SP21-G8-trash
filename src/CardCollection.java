@@ -1,6 +1,5 @@
-
-
 import java.util.ArrayList;
+import java.util.Locale;
 
 public abstract class CardCollection {
     protected ArrayList<Card> cards = new ArrayList();
@@ -43,5 +42,10 @@ public abstract class CardCollection {
             return cards.remove(0);
         }
         else throw new ArrayIndexOutOfBoundsException("Cannot replace a card that does not exist.");
+    }
+
+    public String getImageDir(){
+        if(cards.size() < 1) return FilePaths.EMPTY_CARD_AREA;
+        return this.topCard().getImageDir();
     }
 }

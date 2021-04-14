@@ -1,4 +1,5 @@
 
+import java.util.Locale;
 import java.util.Random;
 
 public class Deck extends CardCollection {
@@ -21,5 +22,10 @@ public class Deck extends CardCollection {
         for(int i = 0; i < 200; i++){
             cards.add(cards.remove(rng.nextInt(cards.size())));
         }
+    }
+
+    public String getImageDir() {
+        if(cards.size() < 1) return FilePaths.EMPTY_CARD_AREA;
+        return FilePaths.CARD_BACK;
     }
 }
