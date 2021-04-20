@@ -1,3 +1,6 @@
+/** A generic pile of playing cards
+ *
+ */
 public class Pile extends CardCollection {
     private final int maxSize;
     public Pile(){

@@ -1,3 +1,6 @@
+/** Specification for playing card suits
+ *
+ */
 public enum Suit {
     Hearts("Hearts"), Clubs("Clubs"), Diamonds("Diamonds"), Spades("Spades");
     private String stringVersion;

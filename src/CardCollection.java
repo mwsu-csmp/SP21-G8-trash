@@ -1,6 +1,8 @@
 import java.util.ArrayList;
-import java.util.Locale;
 
+/** a Collection of playing cards
+ *
+ */
 public abstract class CardCollection {
     protected ArrayList<Card> cards = new ArrayList();
 

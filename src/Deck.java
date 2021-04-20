@@ -1,7 +1,8 @@
-
-import java.util.Locale;
 import java.util.Random;
 
+/** A standard deck of playing cards, minus Jokers
+ *
+ */
 public class Deck extends CardCollection {
     public Deck(){
         for(int i = 2; i <= 14; i++){
@@ -26,6 +27,6 @@ public class Deck extends CardCollection {
 
     public String getImageDir() {
         if(cards.size() < 1) return FilePaths.EMPTY_CARD_AREA;
-        return FilePaths.CARD_BACK;
+        else return FilePaths.CARD_BACK;
     }
 }

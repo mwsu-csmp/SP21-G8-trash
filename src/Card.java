@@ -1,7 +1,8 @@
-import javafx.scene.image.Image;
-
 import java.util.Locale;
 
+/**
+ * A representation of a standard playing card
+ */
 public class Card {
     private final int value;
     private final Suit suit;
@@ -58,7 +59,7 @@ public class Card {
 
     public String getImageDir() {
         if(!faceUp)
-            return "resources/cardBack.png";
+            return FilePaths.CARD_BACK;
         else {
             String localName = this.toString();
             localName = localName.toLowerCase(Locale.ENGLISH);
