@@ -9,6 +9,7 @@ import javafx.scene.layout.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /** JavaFX handler
@@ -20,7 +21,7 @@ public class TrashScene {
 
     private final GridPane masterPane = new GridPane();
 
-    private final TextArea textLog = new TextArea("Welcome to the game!\n\n");
+    private final TextArea textLog;
 
     private final ImageView activeCardView;
     private final ImageView discardView;
@@ -33,12 +34,14 @@ public class TrashScene {
      *
      * @throws FileNotFoundException if an image is not in the proper directory
      */
-    public TrashScene(TrashBoard partnerBoard, PlayerRecord record) throws FileNotFoundException{
+    public TrashScene(TrashBoard partnerBoard, PlayerRecord record) throws IOException {
         final int CARD_WIDTH_IN_PX = 65;
         final double CARD_WIDTH_PERCENTAGE = 0.0846;
 
         this.partnerBoard = partnerBoard;
         this.record = record;
+
+        textLog = new TextArea("Welcome to the game, " + record.getName() + ". \n\n");
 
         masterPane.setGridLinesVisible(true); //FOR DEBUGGING, COMMENT OUT IN FINAL CODE
         masterPane.setPrefSize(1080, 768);
@@ -147,7 +150,13 @@ public class TrashScene {
         startGameButton.setOnAction(actionEvent -> partnerBoard.initializeCards());
 
         deckView.setOnMouseClicked(mouseEvent -> partnerBoard.pressDrawCard());
-        discardView.setOnMouseClicked(mouseEvent -> partnerBoard.pressDiscard());
+        discardView.setOnMouseClicked(mouseEvent -> {
+            try {
+                partnerBoard.pressDiscard();
+            } catch (IOException e){
+                printNewLine("Data could not be saved.");
+            }
+        });
         activeCardView.setOnMouseClicked(mouseEvent -> partnerBoard.pressActiveCard());
 
         playerScoringViews.get(0).setOnMouseClicked(mouseEvent -> partnerBoard.pressPlayerScoringArea(0));

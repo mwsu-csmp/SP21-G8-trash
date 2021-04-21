@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -112,7 +113,7 @@ public class TrashBoard {
     /** logic for clicking the discard.
      *
      */
-    public void pressDiscard(){
+    public void pressDiscard() throws IOException{
         int winCode = 0;
 
         if(!playersTurn){
@@ -191,7 +192,7 @@ public class TrashBoard {
     /** logic for an enemy turn
      *
      */
-    private void enemyTurn(){
+    private void enemyTurn() throws IOException{
         //  delay(() -> {
         //      printNewLine("some action happens.");
         //  }, 500);
@@ -199,7 +200,8 @@ public class TrashBoard {
         playersTurn = false;
         partnerScene.printNewLine("The Khan starts to think...");
 
-        boolean outOfOptions = false;
+        boolean outOfOptions = (deck.size()==0);
+
         while (!playersTurn) {
             if(active.size() <= 0 && deck.size() > 0){
                 active.add(deck.draw());
@@ -225,12 +227,11 @@ public class TrashBoard {
                 partnerScene.updateImages();
                 playersTurn = true;
             }
-
-            endGame(winCode);
         }
 
         partnerScene.printNewLine("The Khan ends their turn.");
         partnerScene.updateImages();
+        endGame(winCode);
         playersTurn = true;
     }
 
@@ -276,21 +277,24 @@ public class TrashBoard {
     }
 
 
-    private void endGame(int endCode){
+    private void endGame(int endCode) throws IOException {
         switch(endCode){
             case 1:
                 playersTurn = false;
-                partnerScene.printNewLine("Player wins.");
-                //TODO expand this
+                record.addWin();
+                partnerScene.printNewLine("Player wins.\n" +
+                        "Win Balance: " + record.getWinBalance());
                 break;
             case 2:
                 playersTurn = false;
+                record.addLoss(false);
                 partnerScene.printNewLine("The Khan wins.");
-                //TODO expand this
                 break;
             default:
                 break;
         }
+
+        record.save();
     }
 
     public Pile getActive() {
