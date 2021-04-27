@@ -25,6 +25,8 @@ public class TrashScene {
 
     private final TextArea textLog;
 
+    private final Button startGameButton = new Button("Start the game!");
+
     private final ImageView activeCardView;
     private final ImageView discardView;
     private final ImageView deckView;
@@ -122,7 +124,7 @@ public class TrashScene {
 
         HBox buttons = new HBox();
         buttons.setAlignment(Pos.CENTER);
-        Button startGameButton = new Button("Start the game!");
+
         buttons.getChildren().add(startGameButton);
 
         VBox rightPane = new VBox();
@@ -240,12 +242,63 @@ public class TrashScene {
         String title = "Game over";
         String content = "The game is over";
 
+        switch(code) {
+            case 0: // win, unnamed
+                Dialog getName = new TextInputDialog("What name do you give the Khan?");
+                getName.setTitle("Your name?");
+                getName.setHeaderText("The khan nods. \"Well done.  Challenger, I do not know your name.\"");
+
+                Optional<String> name = getName.showAndWait();
+
+                if(name.isPresent()){
+                    record.setName(name.get());
+                }
+
+                title = "You win!";
+                content = "\"Very well.  My congratulations to you, " + record.getName() + ".  " +
+                        "You have earned one year for your village, and you are welcome to return to my table anytime.";
+                break;
+            case 1: // win, named
+                title = "You win!";
+                content = "The Khan shifts in their seat.  \"Once again, well done, " + record.getName() + ".  Again?\"";
+                break;
+            case 2: // loss, honorable
+                title = "You lose.";
+                content = "\"A shame,\" the Khan says as they stand up and stretch.  \"But, you played honorably.  " +
+                        "Would you like to try again?\"";
+                break;
+            case 3: // loss, dishonorable
+                title = "You died.";
+                content = "The Khan finishes their winning turn and reaches for a massive battleaxe.  \"I do not abide " +
+                        "cheaters at my table.  Hopefully, the next challenger your village sends has a better sense" +
+                        " of honor.\"  Oh dear!  You are dead.";
+                break;
+            case 4: // loss, death
+                title = "You died.";
+                content = "The Khan wins by default, as you are no longer alive to play.";
+                break;
+            default:
+                break;
+        }
+
+        content += "\n\n";
+        if(record.getWinBalance() < 0) {
+            content += "Your village owes " + (record.getWinBalance() * -1) + " years of service to the Khan.";
+        }
+        else if(record.getWinBalance() > 0) {
+            content += "Your village will be ignored by the Khan for " + record.getWinBalance() + " years.";
+        }
+        else {
+            content += "Your village has a neutral balance with the Khan.";
+        }
+        content += "\nYour win streak is " + record.getWinStreak() + ".";
+
         screen.setTitle(title);
         screen.setContentText(content);
         Integer selected = 0;
 
-        ButtonType close = new ButtonType("Close", ButtonBar.ButtonData.NO);
-        ButtonType restart = new ButtonType("Restart", ButtonBar.ButtonData.YES);
+        ButtonType close = new ButtonType("Leave the table", ButtonBar.ButtonData.NO);
+        ButtonType restart = new ButtonType("Play again", ButtonBar.ButtonData.YES);
         screen.getDialogPane().getButtonTypes().add(close);
         screen.getDialogPane().getButtonTypes().add(restart);
 
@@ -265,9 +318,10 @@ public class TrashScene {
             selected = result.get();
         }
 
-        printNewLine(selected.toString());
-
-        if (selected == 1) partnerBoard.initializeCards();
+        if (selected == 1){
+            startGameButton.setVisible(false);
+            partnerBoard.initializeCards();
+        }
         else printNewLine("Press 'X' in the top right whenever you are ready to leave the table.");
     }
 }

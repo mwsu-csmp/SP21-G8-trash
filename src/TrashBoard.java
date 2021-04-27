@@ -15,6 +15,7 @@ public class TrashBoard {
     private Pile[] playerScoringArea;
     private Pile[] enemyScoringArea;
     private boolean playersTurn = true;
+    private int playerLives = 3;
 
 
     public TrashBoard(PlayerRecord record){
@@ -36,6 +37,7 @@ public class TrashBoard {
      */
     public void initializeCards(){
         playersTurn = true;
+        playerLives = 3;
 
         deck  = new Deck(true);
         discard = new Pile();
@@ -68,6 +70,7 @@ public class TrashBoard {
     public void pressStartGame(){
         if(!playersTurn){
             partnerScene.printNewLine("The Khan doesn't like quitters; especially on their turn.  They let you know with a spinning roundhouse kick.");
+            takeDamage();
             return;
         }
         else initializeCards();
@@ -80,11 +83,13 @@ public class TrashBoard {
     public void pressDrawCard(){
         if(!playersTurn){
             partnerScene.printNewLine("The Khan catches you trying to act out of turn and judo chops you.");
+            takeDamage();
             return;
         }
         try {
             if (active.size() > 0){
                 partnerScene.printNewLine("As you try to draw a second card, the Khan snatches your hand, squeezes forcefully, and stares at you sternly");
+                takeDamage();
                 return;
             }
             active.add(deck.draw());
@@ -95,6 +100,7 @@ public class TrashBoard {
         }
         catch (NullPointerException e){
             partnerScene.printNewLine("The Khan smacks you for tampering with the cards before the game has started.");
+            takeDamage();
         }
         partnerScene.updateImages();
     }
@@ -125,6 +131,7 @@ public class TrashBoard {
 
         if(!playersTurn){
             partnerScene.printNewLine("The Khan catches you trying to act out of turn and judo chops you.");
+            takeDamage();
             return;
         }
         try {
@@ -170,6 +177,7 @@ public class TrashBoard {
     public synchronized void pressPlayerScoringArea(int index){
         if(!playersTurn){
             partnerScene.printNewLine("The Khan catches you trying to act out of turn and judo chops you.");
+            takeDamage();
             return;
         }
         try{
@@ -182,10 +190,12 @@ public class TrashBoard {
             }
             else {
                 partnerScene.printNewLine("The Khan clobbers you for making an illegal move.");
+                takeDamage();
             }
         }
         catch (ArrayIndexOutOfBoundsException e){
             partnerScene.printNewLine("The Khan clobbers you for making an illegal move.");
+            takeDamage();
         }
         catch (NullPointerException e){
             partnerScene.printNewLine("The game has not yet started.");
@@ -199,6 +209,7 @@ public class TrashBoard {
      */
     public void pressEnemyScoringArea(){
         partnerScene.printNewLine("As you reach for the Khan's scoring area, they smack your hand.");
+        takeDamage();
     }
 
     /** logic for an enemy turn
@@ -265,6 +276,21 @@ public class TrashBoard {
     }
 
 
+    private void takeDamage(){
+        playerLives--;
+        partnerScene.printNewLine(playerLives + " lives remaining.");
+        if(playerLives == 0){
+            partnerScene.printNewLine("Oh dear!  You are dead.");
+            try {
+                endGame(2);
+            }
+            catch (IOException e){
+                partnerScene.printNewLine("Game data failed to save.");
+            }
+        }
+    }
+
+
     /** Logic to check for a win
      *
      */
@@ -296,15 +322,29 @@ public class TrashBoard {
             case 1:
                 playersTurn = false;
                 record.addWin();
-                partnerScene.printNewLine("Player wins.\n" +
-                        "Win Balance: " + record.getWinBalance());
-                partnerScene.endScreen(0);
+                partnerScene.printNewLine("Player wins.");
+
+                if(record.isUnnamed()) partnerScene.endScreen(0);
+                else partnerScene.endScreen(1);
+
                 break;
             case 2:
                 playersTurn = false;
-                record.addLoss(false);
                 partnerScene.printNewLine("The Khan wins.");
-                partnerScene.endScreen(0);
+
+                if(playerLives == 3){
+                    record.addLoss(false);
+                    partnerScene.endScreen(2);
+                }
+                else if(playerLives == 0){
+                    record.addLoss(true);
+                    partnerScene.endScreen(4);
+                }
+                else{
+                    record.addLoss(true);
+                    partnerScene.endScreen(3);
+                }
+
                 break;
             default:
                 break;
