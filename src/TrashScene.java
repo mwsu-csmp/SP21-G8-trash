@@ -1,16 +1,18 @@
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.util.Callback;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 /** JavaFX handler
  *
@@ -42,10 +44,12 @@ public class TrashScene {
         this.record = record;
 
         textLog = new TextArea("Welcome to the game, " + record.getName() + ". \n\n");
+        textLog.setPrefHeight(425);
 
-        masterPane.setGridLinesVisible(true); //FOR DEBUGGING, COMMENT OUT IN FINAL CODE
+        // masterPane.setGridLinesVisible(true); //FOR DEBUGGING, COMMENT OUT IN FINAL CODE
         masterPane.setPrefSize(1080, 768);
         masterPane.setPadding(new Insets(10, 10, 10, 10));
+        masterPane.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 
         ColumnConstraints scoringLeft = new ColumnConstraints();
         ColumnConstraints discardLeft = new ColumnConstraints();
@@ -147,7 +151,10 @@ public class TrashScene {
         masterPane.add(enemyScoringAreaPane, 1, 1, 5, 1);
         masterPane.add(playerScoringAreaPane, 1, 5, 5, 1); // player scoring area positioning
 
-        startGameButton.setOnAction(actionEvent -> partnerBoard.initializeCards());
+        startGameButton.setOnAction(actionEvent -> {
+            partnerBoard.pressStartGame();
+            startGameButton.setVisible(false);
+        });
 
         deckView.setOnMouseClicked(mouseEvent -> partnerBoard.pressDrawCard());
         discardView.setOnMouseClicked(mouseEvent -> {
@@ -226,5 +233,41 @@ public class TrashScene {
         catch (FileNotFoundException e) {
             printNewLine("Somehow, the visible nature of some cards have been wiped from existence.  The Khan is furious.");
         }
+    }
+
+    public void endScreen(int code){
+        Dialog screen = new Dialog();
+        String title = "Game over";
+        String content = "The game is over";
+
+        screen.setTitle(title);
+        screen.setContentText(content);
+        Integer selected = 0;
+
+        ButtonType close = new ButtonType("Close", ButtonBar.ButtonData.NO);
+        ButtonType restart = new ButtonType("Restart", ButtonBar.ButtonData.YES);
+        screen.getDialogPane().getButtonTypes().add(close);
+        screen.getDialogPane().getButtonTypes().add(restart);
+
+        screen.setResultConverter(new Callback<ButtonType, Integer>() {
+            @Override
+            public Integer call(ButtonType b) {
+                if (b == close) return 0;
+                else if (b == restart) return 1;
+
+                return 0;
+            }
+        });
+
+        Optional<Integer> result = screen.showAndWait();
+
+        if(result.isPresent()){
+            selected = result.get();
+        }
+
+        printNewLine(selected.toString());
+
+        if (selected == 1) partnerBoard.initializeCards();
+        else printNewLine("Press 'X' in the top right whenever you are ready to leave the table.");
     }
 }

@@ -35,10 +35,6 @@ public class TrashBoard {
      *
      */
     public void initializeCards(){
-        if(!playersTurn){
-            partnerScene.printNewLine("The Khan doesn't like quitters; especially on their turn.  They let you know with a spinning roundhouse kick.");
-            return;
-        }
         playersTurn = true;
 
         deck  = new Deck(true);
@@ -64,6 +60,17 @@ public class TrashBoard {
         }
         partnerScene.updateImages();
         partnerScene.printNewLine("Game Started.");
+    }
+
+    /** logic for pressing the start game button
+     *
+     */
+    public void pressStartGame(){
+        if(!playersTurn){
+            partnerScene.printNewLine("The Khan doesn't like quitters; especially on their turn.  They let you know with a spinning roundhouse kick.");
+            return;
+        }
+        else initializeCards();
     }
 
 
@@ -122,11 +129,17 @@ public class TrashBoard {
         }
         try {
             if(active.size() == 0){
-                partnerScene.printNewLine("Searching the Discard pile will be added later.");
+                if(discard.size() > 0) {
+                    active.add(discard.draw());
+                    partnerScene.printNewLine("Drew the " + active.topCard().toString());
+                }
+                else
+                    partnerScene.printNewLine("There are no cards to draw from the discard.");
             }
             else {
                 if (deck.size() > 0) {
                     discard.add(active.draw());
+                    partnerScene.printNewLine("Discarded the " + discard.topCard().toString());
                     winCode = checkWin();
                 }
                 else {
@@ -134,18 +147,17 @@ public class TrashBoard {
                     return;
                 }
 
+                playersTurn = false;
+                if (winCode == 1){
+                    endGame(winCode);
+                    return;
+                }
+                enemyTurn();
             }
-            playersTurn = false;
-            if (winCode == 1){
-                endGame(winCode);
-                return;
-            }
-            enemyTurn();
         }
         catch (NullPointerException e){
             partnerScene.printNewLine("The game has not yet started.");
         }
-
 
         partnerScene.updateImages();
     }
@@ -224,6 +236,7 @@ public class TrashBoard {
             else {
                 winCode = checkWin();
                 discard.add(active.draw());
+                partnerScene.printNewLine("Discarded the " + discard.topCard().toString());
                 partnerScene.updateImages();
                 playersTurn = true;
             }
@@ -236,6 +249,7 @@ public class TrashBoard {
     }
 
     /** Helper function to enable waiting time for enemy actions
+     * currently unused
      *
      * @param future task to be run
      * @param time millisecond delay
@@ -284,11 +298,13 @@ public class TrashBoard {
                 record.addWin();
                 partnerScene.printNewLine("Player wins.\n" +
                         "Win Balance: " + record.getWinBalance());
+                partnerScene.endScreen(0);
                 break;
             case 2:
                 playersTurn = false;
                 record.addLoss(false);
                 partnerScene.printNewLine("The Khan wins.");
+                partnerScene.endScreen(0);
                 break;
             default:
                 break;
